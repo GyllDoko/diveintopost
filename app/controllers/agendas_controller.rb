@@ -21,11 +21,14 @@ class AgendasController < ApplicationController
     end
   end
   def destroy
-    @agenda.team.users.each do |user|                 
-        AgendaMailer.with(agenda: @agenda).agenda_mailer(user).deliver
+    
+    if current_user == @agenda.team.owner or current_user == @agenda.user
+      @agenda.team.users.each do |user|                 
+          AgendaMailer.with(agenda: @agenda).agenda_mailer(user).deliver
+      end
+      @agenda.destroy 
+      redirect_to dashboard_path
     end
-    @agenda.destroy
-    redirect_to dashboard_path
   
   end
 
